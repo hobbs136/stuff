@@ -234,7 +234,7 @@ class Daemon {
 		pcntl_signal( SIGUSR1, array( $this, "defaultSignal" ) );
 		pcntl_signal( SIGUSR2, array( $this, "defaultSignal" ) );
 
-
+/*
 		if ( defined( 'STDIN' ) ) {
 			fclose( STDIN );
 		}
@@ -244,6 +244,7 @@ class Daemon {
 		if ( defined( 'STDERR' ) ) {
 			fclose( STDERR );
 		}
+ */
 	}
 
 

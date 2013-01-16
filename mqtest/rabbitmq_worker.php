@@ -3,22 +3,23 @@
 declare( ticks = 1 );
 include 'rabbitmq.php';
 include_once "Daemon.php";
-function worker(){
-	$exchangeName = "exchange1";
-	$routingKey = "routing.key";
-	$queueName = "queue1";
+function worker(Daemon $o){
+	global $exchangeName, $routingKey, $queueName;
 	amqp_receive($exchangeName, $routingKey, $queueName);
 }
 function worker1($envelope, $queue){
-	var_dump($envelope, $queue);
+		global $o;
+		$o->blockSigsets();
+		$queue->ack($envelope->getDeliveryTag());
+		file_put_contents(dirname(__FILE__).'/test',$envelope->getBody()."\n",FILE_APPEND);
+		usleep(100000);
+		$o->unblockSigsets();
+		return false;
 }
-worker();
-exit;
 $o = new Daemon();
 $o->setPidFile( "/tmp/daemon" );
-$oWorker = new Workers();
 
 $o->setCallback("worker");
 $o->setProcTitle('worker');
-$o->setMaxProcNum(256);
+$o->setMaxProcNum(64);
 $o->start();
